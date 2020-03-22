@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-env-vars
+  namespace: default
+  labels:
+    maintainer-name: Test Tester
+data:
+  DATACENTER_NAME: AWS Frankfurt
+  ENVIRONMENT: dev
