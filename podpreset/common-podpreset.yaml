@@ -3,8 +3,6 @@ kind: PodPreset
 metadata:
   name: common-podpreset
   namespace: default
-  labels:
-    bisnode.com/maintainer-name: team-platform
 spec:
   selector:
     matchExpressions:
@@ -43,12 +41,7 @@ spec:
   volumeMounts:
     - name: localtime
       mountPath: /etc/localtime
-    - name: hostname
-      mountPath: /appdynamics/uniqueHostId
   volumes:
     - name: localtime
       hostPath:
         path: /etc/localtime
-    - name: hostname
-      hostPath:
-        path: /etc/hostname

@@ -105,4 +105,31 @@ spec:
           key: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
 ```
 
+### Volumes and volume mounts
+
+Finally, just as with environment variables, volumes and volume mounts may
+be injected inside any pod matching the selector:
+
+```yaml
+spec:
+  volumeMounts:
+  - name: localtime
+    mountPath: /etc/localtime
+  volumes:
+  - name: localtime
+    hostPath:
+      path: /etc/localtime
+```
+
+## Caveats
+
+Podpresets are applied to each container in the pod - there is no way of
+pointing specific configuration or volumes to specific containers inside
+of the pod.
+
 See `podpreset/common-podpreset.yaml` for the full example.
+
+## Further reading
+
+https://kubernetes.io/docs/concepts/workloads/pods/podpreset/
+https://kubernetes.io/docs/tasks/inject-data-application/podpreset/
