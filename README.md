@@ -58,6 +58,8 @@ label, regardless of its value.
 
 ## Injecting configuration
 
+### envFrom
+
 With a selector marking all our apps for injection of common config, we may
 now specify which config to inject. Environment variables can either be fetched
 from `ConfigMap`s, `Secret`s or provided directly in the `PodPreset` resource
@@ -76,5 +78,31 @@ spec:
 The snippet above would take all key/value pairs from the `common-env-vars`
 configmap and the `common-env-secrets` secret and inject them as environment
 variables in any pod matching the `app` label previously specified.
+
+### env
+
+While injecting everything from a `ConfigMap` or `Secret` works in many cases,
+sometimes you'll find yourself wanting to expose only a few named variables or
+secrets inside of your pod. This can be done with the `env` attribute combined
+with either a `name`/`value` pair for defining variables directly, or by
+referring to single attribute inside of your configmaps or secrets with
+`valueFrom`:
+
+```yaml
+spec:
+  env:
+    - name: MY_VAR
+      value: 'hello world'
+    - name: SINGLE_VAR_FROM_CONFIGMAP
+      valueFrom:
+        configMapKeyRef:
+          name: common-env-vars
+          key: DATACENTER_NAME
+    - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY_SPECIFIC
+      valueFrom:
+        secretKeyRef:
+          name: common-env-secrets
+          key: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+```
 
 See `podpreset/common-podpreset.yaml` for the full example.
