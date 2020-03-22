@@ -1,0 +1,54 @@
+apiVersion: settings.k8s.io/v1alpha1
+kind: PodPreset
+metadata:
+  name: common-podpreset
+  namespace: default
+  labels:
+    bisnode.com/maintainer-name: team-platform
+spec:
+  selector:
+    matchExpressions:
+      - {key: app, operator: Exists}
+      - {key: tier, operator: Exists}
+      - {key: environment, operator: Exists}
+
+# Get all env vars from selected sources
+
+  envFrom:
+    - configMapRef:
+        name: common-env-vars
+    - secretRef:
+        name: common-env-secrets
+
+# Manual env vars assignment
+
+  env:
+    - name: TESTING
+      value: 'hello world'
+    - name: MY_ENV_VAR
+      value: 'testing testing'
+    - name: DATACENTER_NAME_SPECIFIC
+      valueFrom:
+        configMapKeyRef:
+          name: common-env-vars
+          key: DATACENTER_NAME
+    - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY_SPECIFIC
+      valueFrom:
+        secretKeyRef:
+          name: common-env-secrets
+          key: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+
+# Volumes and volume mounts
+
+  volumeMounts:
+    - name: localtime
+      mountPath: /etc/localtime
+    - name: hostname
+      mountPath: /appdynamics/uniqueHostId
+  volumes:
+    - name: localtime
+      hostPath:
+        path: /etc/localtime
+    - name: hostname
+      hostPath:
+        path: /etc/hostname
