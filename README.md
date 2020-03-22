@@ -6,6 +6,9 @@ admission controller to control what environment variables (sourced from
 `ConfigMap`s or `Secret`s), volumes and volume mounts are made available inside
 of a pod at the moment of its creation.
 
+Using pod presets allows for using light weight pod and container definitions,
+adding environment specific configurations based on the labels set on the pod.
+
 # Installing
 
 Since the PodPreset admission controller is a feature in alpha stage it isn't
@@ -55,6 +58,23 @@ label, regardless of its value.
 
 ## Injecting configuration
 
-TBD
+With a selector marking all our apps for injection of common config, we may
+now specify which config to inject. Environment variables can either be fetched
+from `ConfigMap`s, `Secret`s or provided directly in the `PodPreset` resource
+definition. To include all variables in a configmap or secret, use `envFrom`
+attribute to point to the `ConfigMap` or `Secret` of interest:
+
+```yaml
+spec:
+  envFrom:
+    - configMapRef:
+        name: common-env-vars
+    - secretRef:
+        name: common-env-secrets
+```
+
+The snippet above would take all key/value pairs from the `common-env-vars`
+configmap and the `common-env-secrets` secret and inject them as environment
+variables in any pod matching the `app` label previously specified.
 
 See `podpreset/common-podpreset.yaml` for the full example.
